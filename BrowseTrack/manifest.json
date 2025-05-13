@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Web Time Tracker",
+    "name": "BrowseTrack",
     "version": "1.0.0",
-    "description": "Keeps track of time spent on various domains",
+    "description": "Tracks time spent on defferent websites and provides statistics.",
     "icons": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -16,7 +16,7 @@
       "default_icon": {
         "16": "icons/icon16.png"
       },
-      "default_title": "Web Time Tracker"
+      "default_title": "BrowseTrack"
     },
     "permissions": [
       "tabs",
