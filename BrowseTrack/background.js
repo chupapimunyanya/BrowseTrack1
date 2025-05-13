@@ -142,7 +142,7 @@ function checkFocus() {
 
 // Service Worker активируется при установке расширения
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Web Time Tracker installed');
+  console.log('BrowseTrack extension installed');
   initTracker();
 });
 
