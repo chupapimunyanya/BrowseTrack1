@@ -1,5 +1,9 @@
+body{
+    background-color: rgba(253, 248, 226);
+}
+
 #todayTab,#dailyTab,#weekTab{
-    background-color: rgba(114,106,149,0.3);
+    background-color: rgba(243, 217, 178);
     color:black;
     transition: 1s;
     width: 90px;
@@ -8,43 +12,104 @@
 }
 
 #todayTab:hover, #dailyTab:hover, #weekTab:hover{
-    background-color: rgba(53,31,57,0.5);
+    background-color: rgba(150, 121, 105);
 }
-/* #dailyTab:hover{
-    background-color: rgba(53,31,57,0.5);
-}
-#weekTab:hover{
-    background-color: rgba(53,31,57,0.5);
-} */
 
 .nav-link.active{
-    background-color: rgba(53,31,57,0.75) !important;
+    background-color: rgba(193, 154, 107) !important;
     color: white !important;
 }
 
 #detailBtn,#detailBtn2, #exportBtn1, #exportBtn2{
-    background-color: #719fb0;
+    background-color: rgba(243, 217, 178);
     color:#212529;
     transition: 1s;
     width: 150px;
+    margin: 2px;
 }
 
 #detailBtn:hover,#detailBtn2:hover, #exportBtn1:hover, #exportBtn2:hover{
-    background-color: #0d2e3a;
+    background-color: rgba(150, 121, 105);
     color:white;
 }
 
 .card-header{
-    background-color: #719fb0 ;
+    background-color: rgba(243, 217, 178);
+    text-align: center;
 }
 
 #dateSubmit{
-    background-color: #719fb0;
+    background-color: rgba(243, 217, 178);
     color:#212529;
     transition: 1s;
 }
 
 #dateSubmit:hover{
-    background-color: #0d2e3a;
+    background-color: rgba(150, 121, 105);
     color:white;
+}
+
+/* Change background color for card bodies containing time spent */
+.card-body {
+    background-color: rgba(253, 248, 226);
+    text-align: center;
+}
+
+/* Enhanced styling only for Total Time Spent text */
+#totalTimeToday, #totalTimeThatDay {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #3e2723;
+    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.5px;
+    padding: 2px 0;
+    display: block;
+    text-align: center;
+}
+
+/* Style for date input field */
+input[type="date"], .form-control {
+    background-color: rgba(253, 248, 226);
+    border: 1px solid rgba(243, 217, 178);
+    color: #3e2723;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+/* Style for date input field on focus */
+input[type="date"]:focus, .form-control:focus {
+    background-color: rgba(253, 248, 226);
+    border-color: rgba(193, 154, 107);
+    box-shadow: 0 0 0 0.2rem rgba(193, 154, 107, 0.25);
+}
+
+/* Style for date input calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(50%) sepia(10%) saturate(1000%) hue-rotate(350deg) brightness(90%) contrast(80%);
+}
+
+/* Style for date input label */
+label {
+    color: #3e2723;
+    font-weight: 500;
+}
+
+/* Style for tables to match the theme */
+.table {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Remove border and add some padding to cards */
+.card {
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Specific fixes for the Daily tab's Total Time Spent section */
+#statsRow .card-header {
+    text-align: center;
+}
+
+#statsRow .card-body {
+    text-align: center;
 }
