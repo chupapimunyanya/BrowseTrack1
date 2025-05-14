@@ -261,38 +261,6 @@ document.getElementById('weekTab').addEventListener('click',function(){
   });
 });
 
-function exportTableToCSV(tableId, filename) {
-    const table = document.getElementById(tableId);
-    let csv = [];
 
-    for (let row of table.rows) {
-        let cols = Array.from(row.cells).map(cell => `"${cell.innerText}"`);
-        csv.push(cols.join(","));
-    }
 
-    const csvString = csv.join("\n");
-    const blob = new Blob([csvString], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-}
-
-document.getElementById('exportBtn1').addEventListener('click', () => {
-    const table = document.getElementById('webList');
-    if (!table) {
-        console.error("Table 'webList' not found!");
-        return;
-    }
-    exportTableToExcel(table, "Today_Report");
-});
-
-document.getElementById('exportBtn2').addEventListener('click', () => {
-    const table = document.getElementById('webList2');
-    if (!table) {
-        console.error("Table 'webList2' not found!");
-        return;
-    }
-    exportTableToExcel(table, "Daily_Report");
-});
 
