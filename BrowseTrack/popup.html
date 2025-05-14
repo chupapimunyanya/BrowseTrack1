@@ -7,6 +7,7 @@
         <script src="jquery-3.5.1.min.js"></script>
         <script src="bootstrap-4.5.3-dist\js\bootstrap.min.js"></script>
         <script src="Chart.min.js"></script>
+        
 
     </head>
     <body style="min-width: 400px;min-height: 350px;">
@@ -18,17 +19,17 @@
           <ul class="nav nav-pills" id="tabs" role="tablist">
             <li class="nav-item ml-auto">
               <a href="#todayPanel" class="nav-link active" id="todayTab" data-toggle="pill" role="tab">
-              Today's Stats
+              Today
               </a>
             </li>
             <li class="nav-item">
               <a href="#dailyReport" class="nav-link " id="dailyTab" data-toggle="pill" role="tab" >
-              Daily Report
+              Daily
               </a>
             </li>
             <li class="nav-item mr-auto">
               <a href="#oneWeek"  class="nav-link "  id="weekTab" data-toggle="pill" role="tab" >
-              Recent Summary 
+              Recent 
               </a>
             </li>
           </ul>
@@ -37,19 +38,22 @@
               <div class="container text-center">
                 <canvas id="pie-chart" width="100%" height="100%" class="my-1"></canvas>
                 <div class="row">
-                  <div class="col align-self-center">
-                    <button class="btn my-3 "  id="detailBtn" data-toggle="collapse" data-target="#webListDiv"><span class="small font-weight-bold">See Detailed View</span></button>
-                  </div>
                   <div class="col">
                     <div class="card mb-2">
                       <div class="card-header font-weight-bold py-1">Total Time Spent</div>
                       <div class="card-body py-1"><span id="totalTimeToday"></span></div>
                     </div>
                   </div>
+                  <div class="col align-self-center text-center">
+                    <div class="btn-group">
+                      <button class="btn my-3" id="detailBtn" data-toggle="collapse" data-target="#webListDiv"><span class="small font-weight-bold">See Detailed View</span></button>
+                      <button class="btn my-3" id="exportBtn1"><span class="small font-weight-bold">Export Data</span></button>
+                    </div>
+                  </div>
                 </div>
                 <div class="collapse " id="webListDiv">
                     <table class="table table-hover " >
-                        <thead style="background-color:#a0c1b8">
+                        <thead style="background-color: rgba(255, 248, 220)">
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Website</th>
@@ -83,13 +87,16 @@
               </div>
               <div class="container">
                 <div class="row d-none" id="statsRow">
-                  <div class="col align-self-center">
-                    <button class="btn my-3 "  id="detailBtn2" data-toggle="collapse" data-target="#webListDiv2"><span class="small font-weight-bold">See Detailed View</span></button>
-                  </div>
                   <div class="col">
                     <div class="card mb-2">
                       <div class="card-header font-weight-bold py-1">Total Time Spent</div>
                       <div class="card-body py-1"><span id="totalTimeThatDay"></span></div>
+                    </div>
+                  </div>
+                  <div class="col align-self-center text-center">
+                    <div class="btn-group">
+                      <button class="btn my-3" id="detailBtn2" data-toggle="collapse" data-target="#webListDiv2"><span class="small font-weight-bold">See Detailed View</span></button>
+                      <button class="btn my-3" id="exportBtn2"><span class="small font-weight-bold">Export Data</span></button>
                     </div>
                   </div>
                 </div>
@@ -97,7 +104,7 @@
               <div class="container">
                 <div class="collapse " id="webListDiv2">
                   <table class="table table-hover text-center " >
-                      <thead style="background-color:#a0c1b8">
+                      <thead style="background-color:rgba(255, 248, 220)">
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Website</th>
@@ -135,6 +142,7 @@
           </div>
         </div>
 
+        <script src="xlsx.full.min.js"></script>
         <script src="popup.js"></script>
 
     </body>
