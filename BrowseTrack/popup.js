@@ -261,6 +261,67 @@ document.getElementById('weekTab').addEventListener('click',function(){
   });
 });
 
+// Add these functions to popup.js
 
+// Function to export table data to Excel
+function exportTableToExcel(tableId, fileName) {
+  // Get the table element
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  
+  // Create workbook and worksheet
+  const wb = XLSX.utils.book_new();
+  
+  // Extract data from table
+  const data = [];
+  
+  // Add header row
+  const headerRow = [];
+  const headers = table.querySelectorAll('thead th');
+  headers.forEach(header => {
+    headerRow.push(header.innerText);
+  });
+  data.push(headerRow);
+  
+  // Add data rows
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row => {
+    const dataRow = [];
+    const cells = row.querySelectorAll('td');
+    cells.forEach(cell => {
+      dataRow.push(cell.innerText);
+    });
+    data.push(dataRow);
+  });
+  
+  // Create worksheet from data
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  
+  // Generate filename with current date
+  const today = getDateString(new Date());
+  const fullFileName = `${fileName}_${today}.xlsx`;
+  
+  // Write workbook and download
+  XLSX.writeFile(wb, fullFileName);
+}
 
+// Event listeners for export buttons
+document.addEventListener('DOMContentLoaded', function() {
+  // Export button for today's data
+  document.getElementById('exportBtn1').addEventListener('click', function() {
+    exportTableToExcel('webList', 'BrowseTrack_Today');
+  });
+  
+  // Export button for specific date data
+  document.getElementById('exportBtn2').addEventListener('click', function() {
+    const selectedDate = document.getElementById('dateValue').value;
+    const fileName = selectedDate ? 
+      `BrowseTrack_${selectedDate}` : 
+      'BrowseTrack_Selected_Date';
+    exportTableToExcel('webList2', fileName);
+  });
+});
 
