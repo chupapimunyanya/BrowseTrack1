@@ -113,3 +113,174 @@ label {
 #statsRow .card-body {
     text-align: center;
 }
+
+/* 
+ * Добавьте эти стили в конец вашего файла custom.css 
+ */
+
+/* Стили для кастомизации календаря BrowseTrack */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+input[type="date"].form-control {
+  background-color: rgba(253, 248, 226);
+  border: 1px solid rgba(243, 217, 178);
+  color: #3e2723;
+  font-weight: 500;
+  transition: 0.3s;
+  padding-right: 30px;
+  cursor: pointer;
+  position: relative;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23C19A6B" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) center;
+}
+
+input[type="date"].form-control:focus {
+  border-color: rgba(193, 154, 107, 0.8);
+  box-shadow: 0 0 0 0.2rem rgba(193, 154, 107, 0.25);
+  outline: none;
+}
+
+.bt-calendar {
+  position: absolute;
+  width: 280px;
+  background-color: rgba(253, 248, 226, 0.98);
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(62, 39, 35, 0.2);
+  padding: 12px;
+  margin-top: 5px;
+  z-index: 1000;
+  display: none;
+  border: 1px solid rgba(193, 154, 107, 0.5);
+}
+
+.bt-calendar.show {
+  display: block;
+  animation: btCalendarFadeIn 0.2s ease-out;
+}
+
+@keyframes btCalendarFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bt-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bt-month-nav {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.bt-nav-btn {
+  background: none;
+  border: none;
+  color: rgba(193, 154, 107, 1);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.bt-nav-btn:hover {
+  background-color: rgba(243, 217, 178, 0.4);
+}
+
+.bt-month-year {
+  font-weight: 600;
+  color: #3e2723;
+  font-size: 14px;
+}
+
+.bt-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.bt-day-name {
+  text-align: center;
+  font-weight: 600;
+  color: rgba(193, 154, 107, 0.9);
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+.bt-calendar-day {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #3e2723;
+}
+
+.bt-day {
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.bt-day:hover {
+  background-color: rgba(243, 217, 178, 0.6);
+}
+
+.bt-day.selected {
+  background-color: rgba(193, 154, 107, 1);
+  color: white;
+}
+
+.bt-day.today {
+  border: 1px solid rgba(193, 154, 107, 0.8);
+}
+
+.bt-day.other-month {
+  color: rgba(62, 39, 35, 0.4);
+}
+
+.bt-calendar-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.bt-action-btn {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  background-color: rgba(243, 217, 178, 0.8);
+  color: #3e2723;
+  transition: all 0.2s ease;
+}
+
+.bt-action-btn:hover {
+  background-color: rgba(193, 154, 107, 1);
+  color: white;
+}
+
+.bt-clear-btn {
+  background-color: rgba(243, 217, 178, 0.5);
+}
+
+.bt-today-btn {
+  font-weight: 500;
+}
