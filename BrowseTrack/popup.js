@@ -19,7 +19,7 @@ function secondsToString(seconds,compressed=false){
   seconds = seconds%60;
   let timeString = "";
   if(hours){
-    timeString += hours + " hrs ";
+    timeString += hours + " hr(s) ";
   }
   if(minutes){
     timeString += minutes + " min ";
@@ -43,7 +43,19 @@ function secondsToString(seconds,compressed=false){
   }
 };
 var allKeys, timeSpent, totalTimeSpent,sortedTimeList,topCount,topDataSet,topLabels,dateChart;
-var color = ["rgba(255, 0, 0, 1)","rgb(255, 51, 0)","rgb(255, 102, 0)","rgb(255, 153, 0)","rgb(255, 204, 0)","rgb(255, 255, 0)","rgb(204, 255, 0)","rgb(153, 255, 0)","rgb(102, 255, 0)","rgb(51, 255, 0)"];
+var color = [
+  "rgb(139, 69, 19)",   // Dark Brown
+  "rgb(160, 82, 45)",   // Saddle Brown
+  "rgb(205, 133, 63)",  // Peru
+  "rgb(222, 184, 135)", // Burlywood
+  "rgb(245, 230, 211)", // Light Beige
+  "rgb(230, 184, 156)", // Light Brown
+  "rgb(143, 188, 143)", // Dark Sea Green
+  "rgb(154, 205, 50)",  // Yellow Green
+  "rgb(34, 139, 34)",   // Forest Green
+  "rgb(50, 205, 50)"    // Lime Green
+];
+
 totalTimeSpent = 0;
 var today = getDateString(new Date())
 chrome.storage.local.get(today,function(storedItems){
@@ -325,3 +337,489 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
+// Функция для создания кастомного календаря в BrowseTrack
+function initBrowseTrackCalendar() {
+  // Находим элементы DOM
+  const dateInput = document.getElementById('dateValue');
+  const dateSubmitBtn = document.getElementById('dateSubmit');
+  
+  if (!dateInput) return; // Выходим, если элемент не найден
+  
+  // Создаем HTML-структуру для кастомного календаря
+  const calendarEl = document.createElement('div');
+  calendarEl.className = 'bt-calendar';
+  calendarEl.id = 'btCalendar';
+  
+  // Добавляем HTML для календаря
+  calendarEl.innerHTML = `
+    <div class="bt-calendar-header">
+      <div class="bt-month-nav">
+        <button type="button" class="bt-nav-btn" id="btPrevMonth">&lt;</button>
+        <span class="bt-month-year" id="btCurrentMonthYear"></span>
+        <button type="button" class="bt-nav-btn" id="btNextMonth">&gt;</button>
+      </div>
+    </div>
+    <div class="bt-calendar-days" id="btCalendarDays">
+      <div class="bt-day-name">Пн</div>
+      <div class="bt-day-name">Вт</div>
+      <div class="bt-day-name">Ср</div>
+      <div class="bt-day-name">Чт</div>
+      <div class="bt-day-name">Пт</div>
+      <div class="bt-day-name">Сб</div>
+      <div class="bt-day-name">Вс</div>
+    </div>
+    <div class="bt-calendar-actions">
+      <button type="button" class="bt-action-btn bt-clear-btn" id="btClearDate">Очистить</button>
+      <button type="button" class="bt-action-btn bt-today-btn" id="btTodayDate">Сегодня</button>
+    </div>
+  `;
+  
+  // Вставляем календарь после input
+  dateInput.parentNode.insertBefore(calendarEl, dateInput.nextSibling);
+  
+  // Находим элементы управления календарем
+  const calendarContainer = document.getElementById('btCalendar');
+  const monthYearEl = document.getElementById('btCurrentMonthYear');
+  const prevMonthBtn = document.getElementById('btPrevMonth');
+  const nextMonthBtn = document.getElementById('btNextMonth');
+  const clearDateBtn = document.getElementById('btClearDate');
+  const todayDateBtn = document.getElementById('btTodayDate');
+  const calendarDaysContainer = document.getElementById('btCalendarDays');
+  
+  // Переменные состояния календаря
+  let currentDate = new Date();
+  let selectedDate = null;
+  let availableDates = new Set(); // Множество доступных дат
+  
+  // Массив названий месяцев
+  const months = [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ];
+  
+  // Загружаем доступные даты из storage
+  function loadAvailableDates() {
+    chrome.storage.local.get(null, function(items) {
+      availableDates.clear();
+      const dates = Object.keys(items);
+      dates.forEach(date => {
+        if (date.match(/^\d{4}-\d{2}-\d{2}$/)) { // Проверяем формат YYYY-MM-DD
+          availableDates.add(date);
+        }
+      });
+      renderCalendar(); // Перерисовываем календарь после загрузки дат
+    });
+  }
+  
+  // Функция обновления календаря
+  function renderCalendar() {
+    // Обновляем заголовок с месяцем и годом
+    monthYearEl.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    
+    // Очищаем дни календаря (кроме дней недели)
+    const dayElements = calendarDaysContainer.querySelectorAll('.bt-calendar-day');
+    dayElements.forEach(day => day.remove());
+    
+    // Получаем первый день месяца
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
+    // Получаем последний день месяца
+    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    // Определяем день недели для первого дня месяца (0 - воскресенье, 1 - понедельник)
+    let firstDayOfWeek = firstDayOfMonth.getDay();
+    // Преобразуем для календаря, начинающегося с понедельника
+    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    
+    // Добавляем пустые ячейки для выравнивания первого дня
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      const emptyDay = document.createElement('div');
+      emptyDay.className = 'bt-calendar-day';
+      calendarDaysContainer.appendChild(emptyDay);
+    }
+    
+    // Заполняем календарь днями текущего месяца
+    const today = new Date();
+    
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+      const dayElement = document.createElement('div');
+      dayElement.className = 'bt-calendar-day bt-day';
+      dayElement.textContent = day;
+      
+      const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      
+      // Форматируем дату для проверки
+      const formattedDate = formatDateForStorage(dateToCheck);
+      
+      // Проверяем, есть ли данные для этой даты
+      const hasData = availableDates.has(formattedDate);
+      
+      // Отмечаем сегодняшний день
+      if (
+        today.getDate() === day && 
+        today.getMonth() === currentDate.getMonth() && 
+        today.getFullYear() === currentDate.getFullYear()
+      ) {
+        dayElement.classList.add('today');
+      }
+      
+      // Отмечаем выбранный день
+      if (
+        selectedDate && 
+        selectedDate.getDate() === day && 
+        selectedDate.getMonth() === currentDate.getMonth() && 
+        selectedDate.getFullYear() === currentDate.getFullYear()
+      ) {
+        dayElement.classList.add('selected');
+      }
+      
+      // Добавляем класс для дней без данных
+      if (!hasData) {
+        dayElement.classList.add('no-data');
+      }
+      
+      // Добавляем обработчик клика для выбора даты
+      dayElement.addEventListener('click', () => {
+        if (hasData) { // Разрешаем выбор только дат с данными
+          selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+        }
+      });
+      
+      calendarDaysContainer.appendChild(dayElement);
+    }
+  }
+  
+  // Функция форматирования даты для storage (YYYY-MM-DD)
+  function formatDateForStorage(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  // Функция для выбора даты
+  function selectDate(date) {
+    selectedDate = date;
+    
+    // Форматируем дату для input в формате YYYY-MM-DD
+    const formattedDate = formatDateForStorage(date);
+    dateInput.value = formattedDate;
+    
+    // Обновляем отображение календаря
+    renderCalendar();
+    
+    // Скрываем календарь
+    calendarContainer.classList.remove('show');
+    
+    // Автоматически отправляем форму при выборе даты
+    if (dateSubmitBtn) {
+      dateSubmitBtn.click();
+    }
+  }
+  
+  // Функция для перехода к предыдущему месяцу
+  function gotoPrevMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  }
+  
+  // Функция для перехода к следующему месяцу
+  function gotoNextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  }
+  
+  // Функция для выбора текущей даты (только если есть данные)
+  function selectToday() {
+    const today = new Date();
+    const todayFormatted = formatDateForStorage(today);
+    
+    if (availableDates.has(todayFormatted)) {
+      currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      selectDate(today);
+    }
+  }
+  
+  // Функция для очистки выбранной даты
+  function clearDate() {
+    selectedDate = null;
+    dateInput.value = '';
+    renderCalendar();
+    calendarContainer.classList.remove('show');
+  }
+  
+  // Обработчики событий для управления календарем
+  prevMonthBtn.addEventListener('click', gotoPrevMonth);
+  nextMonthBtn.addEventListener('click', gotoNextMonth);
+  clearDateBtn.addEventListener('click', clearDate);
+  todayDateBtn.addEventListener('click', selectToday);
+  
+  // Показываем календарь при клике на input
+  dateInput.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    calendarContainer.classList.toggle('show');
+  });
+  
+  // Скрываем календарь при клике вне его области
+  document.addEventListener('click', function(e) {
+    if (!calendarContainer.contains(e.target) && e.target !== dateInput) {
+      calendarContainer.classList.remove('show');
+    }
+  });
+  
+  // Предотвращаем открытие нативного календаря
+  dateInput.addEventListener('focus', function(e) {
+    this.blur();
+  });
+  
+  // Инициализируем календарь
+  loadAvailableDates();
+  
+  // Если в input уже есть дата, устанавливаем её в календаре
+  if (dateInput.value) {
+    const parts = dateInput.value.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      
+      const date = new Date(year, month, day);
+      if (!isNaN(date.getTime())) {
+        selectedDate = date;
+        currentDate = new Date(year, month, 1);
+        renderCalendar();
+      }
+    }
+  }
+}
+
+
+// Функция для создания кастомного календаря в BrowseTrack
+function initBrowseTrackCalendar() {
+  // Находим элементы DOM
+  const dateInput = document.getElementById('dateValue');
+  const dateSubmitBtn = document.getElementById('dateSubmit');
+  
+  if (!dateInput) return; // Выходим, если элемент не найден
+  
+  // Создаем HTML-структуру для кастомного календаря
+  const calendarEl = document.createElement('div');
+  calendarEl.className = 'bt-calendar';
+  calendarEl.id = 'btCalendar';
+  
+  // Добавляем HTML для календаря
+  calendarEl.innerHTML = `
+    <div class="bt-calendar-header">
+      <div class="bt-month-nav">
+        <button type="button" class="bt-nav-btn" id="btPrevMonth">&lt;</button>
+        <span class="bt-month-year" id="btCurrentMonthYear"></span>
+        <button type="button" class="bt-nav-btn" id="btNextMonth">&gt;</button>
+      </div>
+    </div>
+    <div class="bt-calendar-days" id="btCalendarDays">
+      <div class="bt-day-name">Mon</div>
+      <div class="bt-day-name">Tue</div>
+      <div class="bt-day-name">Wed</div>
+      <div class="bt-day-name">Thu</div>
+      <div class="bt-day-name">Fri</div>
+      <div class="bt-day-name">Sat</div>
+      <div class="bt-day-name">Sun</div>
+    </div>
+    <div class="bt-calendar-actions">
+      <button type="button" class="bt-action-btn bt-clear-btn" id="btClearDate">Clear</button>
+      <button type="button" class="bt-action-btn bt-today-btn" id="btTodayDate">Today</button>
+    </div>
+  `;
+  
+  // Вставляем календарь после input
+  dateInput.parentNode.insertBefore(calendarEl, dateInput.nextSibling);
+  
+  // Находим элементы управления календарем
+  const calendarContainer = document.getElementById('btCalendar');
+  const monthYearEl = document.getElementById('btCurrentMonthYear');
+  const prevMonthBtn = document.getElementById('btPrevMonth');
+  const nextMonthBtn = document.getElementById('btNextMonth');
+  const clearDateBtn = document.getElementById('btClearDate');
+  const todayDateBtn = document.getElementById('btTodayDate');
+  const calendarDaysContainer = document.getElementById('btCalendarDays');
+  
+  // Состояние календаря
+  let currentDate = new Date();
+  let selectedDate = null;
+  
+// Array of months
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+  
+  // Функция обновления календаря
+  function renderCalendar() {
+    // Обновляем заголовок с месяцем и годом
+    monthYearEl.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    
+    // Очищаем дни календаря (кроме дней недели)
+    const dayElements = calendarDaysContainer.querySelectorAll('.bt-calendar-day');
+    dayElements.forEach(day => day.remove());
+    
+    // Получаем первый день месяца
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
+    // Получаем последний день месяца
+    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    // Определяем день недели для первого дня месяца (0 - воскресенье, 1 - понедельник)
+    let firstDayOfWeek = firstDayOfMonth.getDay();
+    // Преобразуем для календаря, начинающегося с понедельника
+    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    
+    // Добавляем пустые ячейки для выравнивания первого дня
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      const emptyDay = document.createElement('div');
+      emptyDay.className = 'bt-calendar-day';
+      calendarDaysContainer.appendChild(emptyDay);
+    }
+    
+    // Заполняем календарь днями текущего месяца
+    const today = new Date();
+    
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+      const dayElement = document.createElement('div');
+      dayElement.className = 'bt-calendar-day bt-day';
+      dayElement.textContent = day;
+      
+      const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      
+      // Отмечаем сегодняшний день
+      if (
+        today.getDate() === day && 
+        today.getMonth() === currentDate.getMonth() && 
+        today.getFullYear() === currentDate.getFullYear()
+      ) {
+        dayElement.classList.add('today');
+      }
+      
+      // Отмечаем выбранный день
+      if (
+        selectedDate && 
+        selectedDate.getDate() === day && 
+        selectedDate.getMonth() === currentDate.getMonth() && 
+        selectedDate.getFullYear() === currentDate.getFullYear()
+      ) {
+        dayElement.classList.add('selected');
+      }
+      
+      // Добавляем обработчик клика для выбора даты
+      dayElement.addEventListener('click', () => {
+        selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+      });
+      
+      calendarDaysContainer.appendChild(dayElement);
+    }
+  }
+  
+  // Функция для выбора даты
+  function selectDate(date) {
+    selectedDate = date;
+    
+    // Форматируем дату для input в формате YYYY-MM-DD
+    const formattedDate = formatDate(date);
+    dateInput.value = formattedDate;
+    
+    // Обновляем отображение календаря
+    renderCalendar();
+    
+    // Скрываем календарь
+    calendarContainer.classList.remove('show');
+  }
+  
+  // Функция форматирования даты в формат YYYY-MM-DD
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  // Функция для перехода к предыдущему месяцу
+  function gotoPrevMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  }
+  
+  // Функция для перехода к следующему месяцу
+  function gotoNextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  }
+  
+  // Функция для выбора текущей даты
+  function selectToday() {
+    const today = new Date();
+    currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    selectDate(today);
+  }
+  
+  // Функция для очистки выбранной даты
+  function clearDate() {
+    selectedDate = null;
+    dateInput.value = '';
+    renderCalendar();
+    calendarContainer.classList.remove('show');
+  }
+  
+  // Обработчики событий для управления календарем
+  prevMonthBtn.addEventListener('click', gotoPrevMonth);
+  nextMonthBtn.addEventListener('click', gotoNextMonth);
+  clearDateBtn.addEventListener('click', clearDate);
+  todayDateBtn.addEventListener('click', selectToday);
+  
+  // Показываем календарь при клике на input
+  dateInput.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    calendarContainer.classList.toggle('show');
+  });
+  
+  // Скрываем календарь при клике вне его области
+  document.addEventListener('click', function(e) {
+    if (!calendarContainer.contains(e.target) && e.target !== dateInput) {
+      calendarContainer.classList.remove('show');
+    }
+  });
+  
+  // Предотвращаем открытие нативного календаря
+  dateInput.addEventListener('focus', function(e) {
+    this.blur();
+  });
+  
+  // Инициализируем календарь
+  renderCalendar();
+  
+  // Если в input уже есть дата, устанавливаем её в календаре
+  if (dateInput.value) {
+    const parts = dateInput.value.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      
+      const date = new Date(year, month, day);
+      if (!isNaN(date.getTime())) {
+        selectedDate = date;
+        currentDate = new Date(year, month, 1);
+        renderCalendar();
+      }
+    }
+  }
+}
+
+// Запускаем инициализацию календаря после загрузки DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBrowseTrackCalendar);
+} else {
+  initBrowseTrackCalendar();
+}
