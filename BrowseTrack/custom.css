@@ -1,6 +1,32 @@
+/* Устанавливаем базовый размер шрифта для всех элементов */
+* {
+    font-size: 16px; /* Или любой другой размер по умолчанию */
+}
+
+/* Исключения - элементы, у которых уже есть размер шрифта */
+.title-text,
+#totalTimeToday, 
+#totalTimeThatDay,
+#webList,
+.bt-month-year,
+.bt-day-name,
+.bt-calendar-day,
+.bt-action-btn {
+    font: initial;
+}
+
 body{
     background-color: rgba(253, 248, 226);
+    font-size: 16px;
 }
+
+.title-text {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: #3e2723;
+    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
 
 #todayTab,#dailyTab,#weekTab{
     background-color: rgba(243, 217, 178);
@@ -65,6 +91,21 @@ body{
     padding: 2px 0;
     display: block;
     text-align: center;
+}
+
+#webList{
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #3e2723;
+    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+#webList tr:nth-child(odd) {
+    background-color: rgb(243, 221, 189);
+}
+
+#webList tr:nth-child(even) {
+    background-color: rgb(255, 236, 210);
 }
 
 /* Style for date input field */
