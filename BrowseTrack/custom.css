@@ -86,9 +86,9 @@ body{
 }
 
 /* Enhanced styling only for Total Time Spent text */
-#totalTimeToday, #totalTimeThatDay {
+#totalTimeToday, #totalTimeThatDay, #weekAvg, #weekMax {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     color: #3e2723;
     text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.7);
     letter-spacing: 0.5px;

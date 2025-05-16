@@ -380,17 +380,17 @@ document.getElementById('weekTab').addEventListener('click',function(){
     dataObj["labels"] = dateLabels;
     dataObj["datasets"] = [{label:"Time Spent",
     fill:true,
-    backgroundColor: "rgba(75,192,192,0.4)",
+    backgroundColor: "rgb(250, 230, 199)",
     lineTension:0.2,
-    borderColor: "rgba(75,192,192,0.8)",
-    pointBackgroundColor:"rgba(75,192,192,1)",
+    borderColor: "rgb(193, 154, 107)",
+    pointBackgroundColor:"rgb(243, 217, 178)",
     data: timeEachDay
   }]
     weeklyChartDetails["data"] = dataObj;
     weeklyChartDetails["options"] = {
       legend:{display:false},
       //title:{display:true,text:"Time Spent Online in the Recent Past"},
-      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time in Seconds"}}]}
+      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time in Seconds", fontSize:10},}]}
     };
     new Chart(weeklyChart,weeklyChartDetails);
   });
