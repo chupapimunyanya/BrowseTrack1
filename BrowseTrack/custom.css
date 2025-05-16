@@ -28,6 +28,9 @@ body{
     text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.7);
 }
 
+.container.text-center {
+    margin-top: 5px;
+}
 
 #todayTab,#dailyTab,#weekTab{
     background-color: rgba(243, 217, 178);

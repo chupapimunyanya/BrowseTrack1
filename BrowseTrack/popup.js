@@ -389,7 +389,7 @@ document.getElementById('weekTab').addEventListener('click',function(){
     weeklyChartDetails["data"] = dataObj;
     weeklyChartDetails["options"] = {
       legend:{display:false},
-      title:{display:true,text:"Time Spent Online in the Recent Past"},
+      //title:{display:true,text:"Time Spent Online in the Recent Past"},
       scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time in Seconds"}}]}
     };
     new Chart(weeklyChart,weeklyChartDetails);
