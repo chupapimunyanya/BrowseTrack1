@@ -327,3 +327,21 @@ input[type="date"].form-control:focus {
   font-weight: 500;
 }
 
+#pie-chart, #differentDayChart {
+  margin-top: 3px !important;
+  margin-bottom: 3px !important; /* Принудительное центрирование */
+  padding: 0px 10px 0px 0px !important; /* Убираем отступы */
+  width: 100% !important; /* Уменьшаем ширину для центрирования */
+  /* max-height: 150px; */
+  height: 160px !important; /* Устанавливаем высоту в 100% */
+  display: block !important; /* Блочное отображение необходимо для margin: auto */
+}
+
+.chart-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+}

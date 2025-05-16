@@ -42,7 +42,9 @@ function secondsToString(seconds,compressed=false){
     }
   }
 };
-var allKeys, timeSpent, totalTimeSpent,sortedTimeList,topCount,topDataSet,topLabels,dateChart;
+
+
+var allKeys, timeSpent, totalTimeSpent, sortedTimeList, topCount, topDataSet, topLabels, dateChart;
 var color = [
   "rgb(139, 69, 19)",   // Dark Brown
   "rgb(160, 82, 45)",   // Saddle Brown
@@ -58,71 +60,131 @@ var color = [
 
 totalTimeSpent = 0;
 var today = getDateString(new Date())
-chrome.storage.local.get(today,function(storedItems){
+chrome.storage.local.get(today, function(storedItems){
   allKeys = Object.keys(storedItems[today]);
   timeSpent = [];
   sortedTimeList = [];
-  for (let i = 0; i<allKeys.length;i++ ){
+  for (let i = 0; i < allKeys.length; i++ ){
     let webURL = allKeys[i];
     timeSpent.push(storedItems[today][webURL]);
-    totalTimeSpent+= storedItems[today][webURL];
-    sortedTimeList.push([webURL,storedItems[today][webURL]]);
+    totalTimeSpent += storedItems[today][webURL];
+    sortedTimeList.push([webURL, storedItems[today][webURL]]);
   }
-  sortedTimeList.sort((a,b)=>b[1]-a[1]);
+  sortedTimeList.sort((a,b) => b[1] - a[1]);
   console.log(sortedTimeList);
 
-  topCount = allKeys.length>10 ? 10 : allKeys.length;
+  topCount = allKeys.length > 10 ? 10 : allKeys.length;
   console.log(topCount);
 
   document.getElementById("totalTimeToday").innerText = secondsToString(totalTimeSpent);
-  topDataSet= [];
-  topLabels= [];
-  for(let j=0;j<topCount;j++){
+  topDataSet = [];
+  topLabels = [];
+  for(let j = 0; j < topCount; j++){
     topDataSet.push(sortedTimeList[j][1]);
     topLabels.push(sortedTimeList[j][0]);
   }
   
-
-    const webTable = document.getElementById('webList');
-    for(let i = 0; i<allKeys.length;i++){
-        let webURL = sortedTimeList[i][0];
-        let row = document.createElement('tr');
-        let serialNumber = document.createElement('td');
-        serialNumber.innerText = i+1;
-        let siteURL = document.createElement('td');
-        siteURL.innerText= webURL;
-        let siteTime = document.createElement('td');
-        siteTime.innerText = secondsToString(sortedTimeList[i][1]);
-        row.appendChild(serialNumber);
-        row.appendChild(siteURL);
-        row.appendChild(siteTime);
-        webTable.appendChild(row);
-        console.log(row);
-    }
-
-    new Chart(document.getElementById("pie-chart"), {
-      type: 'doughnut',
-      data: {
-        labels: topLabels,
-        datasets: [{
-          label: "Time Spent",
-          backgroundColor: color,
-          data: topDataSet
+  const webTable = document.getElementById('webList');
+  for(let i = 0; i < allKeys.length; i++){
+    let webURL = sortedTimeList[i][0];
+    let row = document.createElement('tr');
+    let serialNumber = document.createElement('td');
+    serialNumber.innerText = i+1;
+    let siteURL = document.createElement('td');
+    siteURL.innerText = webURL;
+    let siteTime = document.createElement('td');
+    siteTime.innerText = secondsToString(sortedTimeList[i][1]);
+    row.appendChild(serialNumber);
+    row.appendChild(siteURL);
+    row.appendChild(siteTime);
+    webTable.appendChild(row);
+    console.log(row);
+  }
+  
+  // Changed to a single stacked horizontal bar chart
+  new Chart(document.getElementById("pie-chart"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [''],  // Empty label for the y-axis
+      datasets: topLabels.map((label, index) => {
+        return {
+          label: label,
+          backgroundColor: color[index % color.length],
+          data: [topDataSet[index]], // Each dataset has just one value
+          borderWidth: 1,
+          borderColor: '#fff',
+          barThickness: 60, // Setting barThickness at dataset level
+          maxBarThickness: 60,
+          
+        }
+      })
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      title: {
+        display: false // Hide title
+      },
+      legend: {
+        display: true,
+        position: 'top', // Show domains on top
+        labels: {
+          padding: 5, // Reduce padding in legend labels
+          boxWidth: 10, // Smaller color boxes
+          fontSize: 14 // Slightly smaller text
+        },
+        align: 'center'
+      },
+      layout: {
+        padding: {
+          top: 5,
+          bottom: 5,
+          right: 5,
+          left: 5
+        }
+      },
+      plugins: {
+        datalabels: {
+          display: false // Disable datalabels if you have this plugin
+        }
+      },
+      scales: {
+        xAxes: [{
+          stacked: true, // This makes the bars stack
+          ticks: {
+            display: false, // Hide ticks
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false // Hide grid lines
+          }
+        }],
+        yAxes: [{
+          stacked: true, // This makes the bars stack
+          gridLines: {
+            display: false // Hide grid lines
+          },
+          ticks: {
+            display: false // Hide ticks
+          }
         }]
       },
-      options: {
-        title: {
-          display: true,
-          text: "Top Visited Sites Today"
-        },
-        legend:{
-            display:true
-        },
-        circumference : Math.PI,
-        rotation: Math.PI
+      tooltips: {
+        enabled: true,
+        mode: 'nearest',
+        intersect: true,
+        callbacks: {
+          title: function(tooltipItems, data) {
+            const datasetIndex = tooltipItems[0].datasetIndex;
+            return data.datasets[datasetIndex].label;
+          },
+          label: function(tooltipItem, data) {
+            return 'Time spent: ' + secondsToString(tooltipItem.value);
+          }
+        }
       }
+    }
   });
-
 });
 
 chrome.storage.local.get(null,function(items){
@@ -170,28 +232,89 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
         if(dateChart){
           dateChart.destroy()
         }
-         dateChart = new Chart(document.getElementById("differentDayChart"), {
-          type: 'doughnut',
-          data: {
-            labels: dataSetLabels,
-            datasets: [{
-              label: "Time Spent",
-              backgroundColor: color,
-              data: dataSet
-            }]
+         dateChart =   new Chart(document.getElementById("differentDayChart"), {
+    type: 'horizontalBar',
+    data: {
+      labels: [''],  // Empty label for the y-axis
+      datasets: topLabels.map((label, index) => {
+        return {
+          label: label,
+          backgroundColor: color[index % color.length],
+          data: [topDataSet[index]], // Each dataset has just one value
+          borderWidth: 1,
+          borderColor: '#fff',
+          barThickness: 60, // Setting barThickness at dataset level
+          maxBarThickness: 60,
+          
+        }
+      })
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      title: {
+        display: false // Hide title
+      },
+      legend: {
+        display: true,
+        position: 'top', // Show domains on top
+        labels: {
+          padding: 5, // Reduce padding in legend labels
+          boxWidth: 10, // Smaller color boxes
+          fontSize: 14 // Slightly smaller text
+        },
+        align: 'center'
+      },
+      layout: {
+        padding: {
+          top: 5,
+          bottom: 5,
+          right: 5,
+          left: 5
+        }
+      },
+      plugins: {
+        datalabels: {
+          display: false // Disable datalabels if you have this plugin
+        }
+      },
+      scales: {
+        xAxes: [{
+          stacked: true, // This makes the bars stack
+          ticks: {
+            display: false, // Hide ticks
+            beginAtZero: true
           },
-          options: {
-            title: {
-              display: true,
-              text: chartTitle
-            },
-            legend:{
-                display:true
-            },
-            circumference : Math.PI,
-            rotation: Math.PI
+          gridLines: {
+            display: false // Hide grid lines
           }
-      });
+        }],
+        yAxes: [{
+          stacked: true, // This makes the bars stack
+          gridLines: {
+            display: false // Hide grid lines
+          },
+          ticks: {
+            display: false // Hide ticks
+          }
+        }]
+      },
+      tooltips: {
+        enabled: true,
+        mode: 'nearest',
+        intersect: true,
+        callbacks: {
+          title: function(tooltipItems, data) {
+            const datasetIndex = tooltipItems[0].datasetIndex;
+            return data.datasets[datasetIndex].label;
+          },
+          label: function(tooltipItem, data) {
+            return 'Time spent: ' + secondsToString(tooltipItem.value);
+          }
+        }
+      }
+    }
+  });
       document.getElementById("statsRow").classList.remove("d-none");
       document.getElementById("totalTimeThatDay").innerText = secondsToString(thatDayTotal);
       const webList2 = document.getElementById("webList2");
@@ -273,7 +396,6 @@ document.getElementById('weekTab').addEventListener('click',function(){
   });
 });
 
-// Add these functions to popup.js
 
 // Function to export table data to Excel
 function exportTableToExcel(tableId, fileName) {
@@ -336,264 +458,6 @@ document.addEventListener('DOMContentLoaded', function() {
     exportTableToExcel('webList2', fileName);
   });
 });
-
-
-// Функция для создания кастомного календаря в BrowseTrack
-function initBrowseTrackCalendar() {
-  // Находим элементы DOM
-  const dateInput = document.getElementById('dateValue');
-  const dateSubmitBtn = document.getElementById('dateSubmit');
-  
-  if (!dateInput) return; // Выходим, если элемент не найден
-  
-  // Создаем HTML-структуру для кастомного календаря
-  const calendarEl = document.createElement('div');
-  calendarEl.className = 'bt-calendar';
-  calendarEl.id = 'btCalendar';
-  
-  // Добавляем HTML для календаря
-  calendarEl.innerHTML = `
-    <div class="bt-calendar-header">
-      <div class="bt-month-nav">
-        <button type="button" class="bt-nav-btn" id="btPrevMonth">&lt;</button>
-        <span class="bt-month-year" id="btCurrentMonthYear"></span>
-        <button type="button" class="bt-nav-btn" id="btNextMonth">&gt;</button>
-      </div>
-    </div>
-    <div class="bt-calendar-days" id="btCalendarDays">
-      <div class="bt-day-name">Пн</div>
-      <div class="bt-day-name">Вт</div>
-      <div class="bt-day-name">Ср</div>
-      <div class="bt-day-name">Чт</div>
-      <div class="bt-day-name">Пт</div>
-      <div class="bt-day-name">Сб</div>
-      <div class="bt-day-name">Вс</div>
-    </div>
-    <div class="bt-calendar-actions">
-      <button type="button" class="bt-action-btn bt-clear-btn" id="btClearDate">Очистить</button>
-      <button type="button" class="bt-action-btn bt-today-btn" id="btTodayDate">Сегодня</button>
-    </div>
-  `;
-  
-  // Вставляем календарь после input
-  dateInput.parentNode.insertBefore(calendarEl, dateInput.nextSibling);
-  
-  // Находим элементы управления календарем
-  const calendarContainer = document.getElementById('btCalendar');
-  const monthYearEl = document.getElementById('btCurrentMonthYear');
-  const prevMonthBtn = document.getElementById('btPrevMonth');
-  const nextMonthBtn = document.getElementById('btNextMonth');
-  const clearDateBtn = document.getElementById('btClearDate');
-  const todayDateBtn = document.getElementById('btTodayDate');
-  const calendarDaysContainer = document.getElementById('btCalendarDays');
-  
-  // Переменные состояния календаря
-  let currentDate = new Date();
-  let selectedDate = null;
-  let availableDates = new Set(); // Множество доступных дат
-  
-  // Массив названий месяцев
-  const months = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-  ];
-  
-  // Загружаем доступные даты из storage
-  function loadAvailableDates() {
-    chrome.storage.local.get(null, function(items) {
-      availableDates.clear();
-      const dates = Object.keys(items);
-      dates.forEach(date => {
-        if (date.match(/^\d{4}-\d{2}-\d{2}$/)) { // Проверяем формат YYYY-MM-DD
-          availableDates.add(date);
-        }
-      });
-      renderCalendar(); // Перерисовываем календарь после загрузки дат
-    });
-  }
-  
-  // Функция обновления календаря
-  function renderCalendar() {
-    // Обновляем заголовок с месяцем и годом
-    monthYearEl.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-    
-    // Очищаем дни календаря (кроме дней недели)
-    const dayElements = calendarDaysContainer.querySelectorAll('.bt-calendar-day');
-    dayElements.forEach(day => day.remove());
-    
-    // Получаем первый день месяца
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    
-    // Получаем последний день месяца
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-    // Определяем день недели для первого дня месяца (0 - воскресенье, 1 - понедельник)
-    let firstDayOfWeek = firstDayOfMonth.getDay();
-    // Преобразуем для календаря, начинающегося с понедельника
-    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-    
-    // Добавляем пустые ячейки для выравнивания первого дня
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      const emptyDay = document.createElement('div');
-      emptyDay.className = 'bt-calendar-day';
-      calendarDaysContainer.appendChild(emptyDay);
-    }
-    
-    // Заполняем календарь днями текущего месяца
-    const today = new Date();
-    
-    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
-      const dayElement = document.createElement('div');
-      dayElement.className = 'bt-calendar-day bt-day';
-      dayElement.textContent = day;
-      
-      const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-      
-      // Форматируем дату для проверки
-      const formattedDate = formatDateForStorage(dateToCheck);
-      
-      // Проверяем, есть ли данные для этой даты
-      const hasData = availableDates.has(formattedDate);
-      
-      // Отмечаем сегодняшний день
-      if (
-        today.getDate() === day && 
-        today.getMonth() === currentDate.getMonth() && 
-        today.getFullYear() === currentDate.getFullYear()
-      ) {
-        dayElement.classList.add('today');
-      }
-      
-      // Отмечаем выбранный день
-      if (
-        selectedDate && 
-        selectedDate.getDate() === day && 
-        selectedDate.getMonth() === currentDate.getMonth() && 
-        selectedDate.getFullYear() === currentDate.getFullYear()
-      ) {
-        dayElement.classList.add('selected');
-      }
-      
-      // Добавляем класс для дней без данных
-      if (!hasData) {
-        dayElement.classList.add('no-data');
-      }
-      
-      // Добавляем обработчик клика для выбора даты
-      dayElement.addEventListener('click', () => {
-        if (hasData) { // Разрешаем выбор только дат с данными
-          selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
-        }
-      });
-      
-      calendarDaysContainer.appendChild(dayElement);
-    }
-  }
-  
-  // Функция форматирования даты для storage (YYYY-MM-DD)
-  function formatDateForStorage(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-  
-  // Функция для выбора даты
-  function selectDate(date) {
-    selectedDate = date;
-    
-    // Форматируем дату для input в формате YYYY-MM-DD
-    const formattedDate = formatDateForStorage(date);
-    dateInput.value = formattedDate;
-    
-    // Обновляем отображение календаря
-    renderCalendar();
-    
-    // Скрываем календарь
-    calendarContainer.classList.remove('show');
-    
-    // Автоматически отправляем форму при выборе даты
-    if (dateSubmitBtn) {
-      dateSubmitBtn.click();
-    }
-  }
-  
-  // Функция для перехода к предыдущему месяцу
-  function gotoPrevMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-  }
-  
-  // Функция для перехода к следующему месяцу
-  function gotoNextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-  }
-  
-  // Функция для выбора текущей даты (только если есть данные)
-  function selectToday() {
-    const today = new Date();
-    const todayFormatted = formatDateForStorage(today);
-    
-    if (availableDates.has(todayFormatted)) {
-      currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
-      selectDate(today);
-    }
-  }
-  
-  // Функция для очистки выбранной даты
-  function clearDate() {
-    selectedDate = null;
-    dateInput.value = '';
-    renderCalendar();
-    calendarContainer.classList.remove('show');
-  }
-  
-  // Обработчики событий для управления календарем
-  prevMonthBtn.addEventListener('click', gotoPrevMonth);
-  nextMonthBtn.addEventListener('click', gotoNextMonth);
-  clearDateBtn.addEventListener('click', clearDate);
-  todayDateBtn.addEventListener('click', selectToday);
-  
-  // Показываем календарь при клике на input
-  dateInput.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    calendarContainer.classList.toggle('show');
-  });
-  
-  // Скрываем календарь при клике вне его области
-  document.addEventListener('click', function(e) {
-    if (!calendarContainer.contains(e.target) && e.target !== dateInput) {
-      calendarContainer.classList.remove('show');
-    }
-  });
-  
-  // Предотвращаем открытие нативного календаря
-  dateInput.addEventListener('focus', function(e) {
-    this.blur();
-  });
-  
-  // Инициализируем календарь
-  loadAvailableDates();
-  
-  // Если в input уже есть дата, устанавливаем её в календаре
-  if (dateInput.value) {
-    const parts = dateInput.value.split('-');
-    if (parts.length === 3) {
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      
-      const date = new Date(year, month, day);
-      if (!isNaN(date.getTime())) {
-        selectedDate = date;
-        currentDate = new Date(year, month, 1);
-        renderCalendar();
-      }
-    }
-  }
-}
 
 
 // Функция для создания кастомного календаря в BrowseTrack
