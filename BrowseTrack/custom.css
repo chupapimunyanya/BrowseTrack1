@@ -328,13 +328,17 @@ input[type="date"].form-control:focus {
 }
 
 #pie-chart, #differentDayChart {
-  margin-top: 3px !important;
-  margin-bottom: 3px !important; /* Принудительное центрирование */
-  padding: 0px 10px 0px 0px !important; /* Убираем отступы */
-  width: 100% !important; /* Уменьшаем ширину для центрирования */
-  /* max-height: 150px; */
-  height: 160px !important; /* Устанавливаем высоту в 100% */
-  display: block !important; /* Блочное отображение необходимо для margin: auto */
+  margin: 3px auto !important; /* Автоматические боковые отступы для центрирования */
+  padding: 0 !important;
+  width: 100% !important;
+  height: 160px !important;
+  display: block !important;
+  max-width: 600px; /* Ограничиваем максимальную ширину */
+}
+
+/* Дополнительно зафиксируем размер canvas */
+#pie-chart, #differentDayChart {
+  min-width: 400px; /* Минимальная ширина для консистентности */
 }
 
 .chart-container {
@@ -344,4 +348,5 @@ input[type="date"].form-control:focus {
   align-items: center;
   height: 100%;
   text-decoration: none;
+  overflow: hidden; /* Предотвращаем выход за границы */
 }
