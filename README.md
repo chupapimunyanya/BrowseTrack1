@@ -6,7 +6,6 @@
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
   [![Chrome Extension](https://img.shields.io/badge/Platform-Chrome-yellow.svg)](https://developer.chrome.com/docs/extensions/)
-  
 </div>
 
 ## 📋 Overview
@@ -62,7 +61,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <div align="center">
-  
   **BrowseTrack** - Take control of your online time  
-  
 </div>
