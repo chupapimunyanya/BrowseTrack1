@@ -1,8 +1,8 @@
-# <img src="BrowseTrack/icons/icon16.png" height="10px"> BrowseTrack
+# BrowseTrack
 
 <div align="center">
   
-  **Track and analyze your browsing habits with ease**
+  ***Track and analyze your browsing habits with ease***
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
   [![Chrome Extension](https://img.shields.io/badge/Platform-Chrome-yellow.svg)](https://developer.chrome.com/docs/extensions/)
