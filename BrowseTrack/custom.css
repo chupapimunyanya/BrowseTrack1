@@ -54,8 +54,12 @@ body{
     background-color: rgba(243, 217, 178);
     color:#212529;
     transition: 1s;
-    width: 150px;
+    width: 180px;
     margin: 2px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #detailBtn:hover,#detailBtn2:hover, #exportBtn1:hover, #exportBtn2:hover{
@@ -68,13 +72,18 @@ body{
     text-align: center;
 }
 
-#dateSubmit{
+#dateSubmit, #last7DaysSubmit{
     background-color: rgba(243, 217, 178);
     color:#212529;
     transition: 1s;
+    width: 100px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 2px;
+    /* margin-right: 10px; */
 }
 
-#dateSubmit:hover{
+#dateSubmit:hover, #last7DaysSubmit:hover{
     background-color: rgba(150, 121, 105);
     color:white;
 }
@@ -110,6 +119,17 @@ body{
 
 #webList tr:nth-child(even), #webList2 tr:nth-child(even) {
     background-color: rgb(255, 236, 210);
+}
+
+#dateValue{
+  height: 38px;
+  width: 160px;
+  margin: 2px;
+
+}
+
+#tryAgain{
+  margin: 10px;
 }
 
 /* Style for date input field */
@@ -158,10 +178,6 @@ label {
 #statsRow .card-body {
     text-align: center;
 }
-
-/* 
- * Добавьте эти стили в конец вашего файла custom.css 
- */
 
 /* Стили для кастомизации календаря BrowseTrack */
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -331,18 +347,19 @@ input[type="date"].form-control:focus {
 }
 
 #pie-chart, #differentDayChart {
-  margin: 3px auto !important; /* Автоматические боковые отступы для центрирования */
+  margin: 0px auto !important;
   padding: 0 !important;
-  width: 100% !important;
+  max-width: 380px;
   height: 160px !important;
+  width: 380px;
   display: block !important;
-  max-width: 600px; /* Ограничиваем максимальную ширину */
-}
+} 
 
-/* Дополнительно зафиксируем размер canvas */
-#pie-chart, #differentDayChart {
-  min-width: 400px; /* Минимальная ширина для консистентности */
-}
+
+/* #pie-chart, #differentDayChart {
+  min-width: 400px;
+} */
+
 
 .chart-container {
   width: 100%;
@@ -351,5 +368,11 @@ input[type="date"].form-control:focus {
   align-items: center;
   height: 100%;
   text-decoration: none;
-  overflow: hidden; /* Предотвращаем выход за границы */
+  overflow: hidden;
+}
+
+
+#pastWeek{
+  max-height: 280px;
+  height: 80%;
 }

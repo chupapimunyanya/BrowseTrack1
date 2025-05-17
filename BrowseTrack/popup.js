@@ -113,8 +113,8 @@ chrome.storage.local.get(today, function(storedItems){
           data: [topDataSet[index]], // Each dataset has just one value
           borderWidth: 1,
           borderColor: '#fff',
-          barThickness: 60, // Setting barThickness at dataset level
-          maxBarThickness: 60,
+          barThickness: 40, // Setting barThickness at dataset level
+          maxBarThickness: 40,
           
         }
       })
@@ -223,121 +223,324 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
         let dataSet = [];
         let thatDayTotal = 0;
         let dataSetLabels = [];
+        
         for(let i=0;i<topTen;i++){
           dataSet.push(times[i][1]);
           dataSetLabels.push(times[i][0]);
           thatDayTotal+= times[i][1];
         }
+        
         let chartTitle = "Top Visited Sites on "+givenDate;
+        
         if(dateChart){
           dateChart.destroy()
         }
-         dateChart =   new Chart(document.getElementById("differentDayChart"), {
-    type: 'horizontalBar',
-    data: {
-      labels: [''],  // Empty label for the y-axis
-      datasets: topLabels.map((label, index) => {
-        return {
-          label: label,
-          backgroundColor: color[index % color.length],
-          data: [topDataSet[index]], // Each dataset has just one value
-          borderWidth: 1,
-          borderColor: '#fff',
-          barThickness: 60, // Setting barThickness at dataset level
-          maxBarThickness: 60,
-          
-        }
-      })
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      title: {
-        display: false // Hide title
-      },
-      legend: {
-        display: true,
-        position: 'top', // Show domains on top
-        labels: {
-          padding: 5, // Reduce padding in legend labels
-          boxWidth: 10, // Smaller color boxes
-          fontSize: 14 // Slightly smaller text
-        },
-        align: 'center'
-      },
-      layout: {
-        padding: {
-          top: 5,
-          bottom: 5,
-          right: 5,
-          left: 5
-        }
-      },
-      plugins: {
-        datalabels: {
-          display: false // Disable datalabels if you have this plugin
-        }
-      },
-      scales: {
-        xAxes: [{
-          stacked: true, // This makes the bars stack
-          ticks: {
-            display: false, // Hide ticks
-            beginAtZero: true
+        
+        // Create new chart using dataSetLabels and dataSet directly
+        dateChart = new Chart(document.getElementById("differentDayChart"), {
+          type: 'horizontalBar',
+          data: {
+            labels: [''],  // Empty label for the y-axis
+            datasets: dataSetLabels.map((label, index) => {
+              return {
+                label: label,
+                backgroundColor: color[index % color.length],
+                data: [dataSet[index]], // Each dataset has just one value
+                borderWidth: 1,
+                borderColor: '#fff',
+                barThickness: 40,
+                maxBarThickness: 40,
+              }
+            })
           },
-          gridLines: {
-            display: false // Hide grid lines
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+              display: false // Hide title
+            },
+            legend: {
+              display: true,
+              position: 'top', // Show domains on top
+              labels: {
+                padding: 5, // Reduce padding in legend labels
+                boxWidth: 10, // Smaller color boxes
+                fontSize: 14 // Slightly smaller text
+              },
+              align: 'center'
+            },
+            layout: {
+              padding: {
+                top: 5,
+                bottom: 5,
+                right: 5,
+                left: 5
+              }
+            },
+            plugins: {
+              datalabels: {
+                display: false // Disable datalabels if you have this plugin
+              }
+            },
+            scales: {
+              xAxes: [{
+                stacked: true, // This makes the bars stack
+                ticks: {
+                  display: false, // Hide ticks
+                  beginAtZero: true
+                },
+                gridLines: {
+                  display: false // Hide grid lines
+                }
+              }],
+              yAxes: [{
+                stacked: true, // This makes the bars stack
+                gridLines: {
+                  display: false // Hide grid lines
+                },
+                ticks: {
+                  display: false // Hide ticks
+                }
+              }]
+            },
+            tooltips: {
+              enabled: true,
+              mode: 'nearest',
+              intersect: true,
+              callbacks: {
+                title: function(tooltipItems, data) {
+                  const datasetIndex = tooltipItems[0].datasetIndex;
+                  return data.datasets[datasetIndex].label;
+                },
+                label: function(tooltipItem, data) {
+                  return 'Time spent: ' + secondsToString(tooltipItem.value);
+                }
+              }
+            }
           }
-        }],
-        yAxes: [{
-          stacked: true, // This makes the bars stack
-          gridLines: {
-            display: false // Hide grid lines
-          },
-          ticks: {
-            display: false // Hide ticks
-          }
-        }]
-      },
-      tooltips: {
-        enabled: true,
-        mode: 'nearest',
-        intersect: true,
-        callbacks: {
-          title: function(tooltipItems, data) {
-            const datasetIndex = tooltipItems[0].datasetIndex;
-            return data.datasets[datasetIndex].label;
-          },
-          label: function(tooltipItem, data) {
-            return 'Time spent: ' + secondsToString(tooltipItem.value);
-          }
+        });
+  
+        document.getElementById("statsRow").classList.remove("d-none");
+        document.getElementById("totalTimeThatDay").innerText = secondsToString(thatDayTotal);
+        const webList2 = document.getElementById("webList2");
+        while (webList2.firstChild) {
+          webList2.removeChild(webList2.lastChild);
         }
+        for(let i=0;i<times.length;i++){
+          let row = document.createElement('tr');
+          let col1 = document.createElement('td');
+          col1.innerText = i+1;
+          row.appendChild(col1);
+          let col2 = document.createElement('td');
+          col2.innerText = times[i][0];
+          row.appendChild(col2);
+          let col3 = document.createElement('td');
+          col3.innerText = secondsToString(times[i][1]);
+          row.appendChild(col3);
+          webList2.appendChild(row);
+        }   
       }
-    }
-  });
-      document.getElementById("statsRow").classList.remove("d-none");
-      document.getElementById("totalTimeThatDay").innerText = secondsToString(thatDayTotal);
-      const webList2 = document.getElementById("webList2");
-      while (webList2.firstChild) {
-        webList2.removeChild(webList2.lastChild);
-      }
-      for(let i=0;i<times.length;i++){
-        let row = document.createElement('tr');
-        let col1 = document.createElement('td');
-        col1.innerText = i+1;
-        row.appendChild(col1);
-        let col2 = document.createElement('td');
-        col2.innerText = times[i][0];
-        row.appendChild(col2);
-        let col3 = document.createElement('td');
-        col3.innerText = secondsToString(times[i][1]);
-        row.appendChild(col3);
-        webList2.appendChild(row);
-      }   
-      }
-     
     });
   }
+});
+
+// Add event listener for Last 7 Days button
+document.getElementById("last7DaysSubmit").addEventListener('click', function() {
+  document.getElementById("tryAgain").classList.add("d-none");
+  
+  // Get current date and format it as YYYY-MM-DD
+  const today = new Date();
+  
+  // Create an array to store the last 7 days dates
+  const last7Days = [];
+  
+  // Generate the dates for the last 7 days
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    
+    // Format date as YYYY-MM-DD (same format as calendar value)
+    const formattedDate = date.toISOString().split('T')[0];
+    last7Days.push(formattedDate);
+  }
+  
+  // Store for accumulated data across all days
+  let aggregatedData = {};
+  let daysProcessed = 0;
+  let missedDays = 0;
+  
+  // Process each day and aggregate the results
+  last7Days.forEach(day => {
+    chrome.storage.local.get(day, function(thatDay) {
+      daysProcessed++;
+      
+      if (thatDay[day] != null) {
+        // Process data for this day
+        const sites = Object.keys(thatDay[day]);
+        
+        // Add each site's time to the aggregated data
+        sites.forEach(site => {
+          if (aggregatedData[site]) {
+            aggregatedData[site] += thatDay[day][site];
+          } else {
+            aggregatedData[site] = thatDay[day][site];
+          }
+        });
+      } else {
+        // No data for this day
+        missedDays++;
+      }
+      
+      // When all days have been processed, display the results
+      if (daysProcessed === 7) {
+        if (Object.keys(aggregatedData).length === 0) {
+          document.getElementById("tryAgain").innerText = "No records exist for the last 7 days!";
+          document.getElementById("tryAgain").classList.remove("d-none");
+          return;
+        }
+        
+        // Convert aggregated data to array format for sorting
+        let times = Object.keys(aggregatedData).map(site => [site, aggregatedData[site]]);
+        
+        // Sort by time (descending)
+        times.sort(function(a, b) { return b[1] - a[1] });
+        
+        // Take top 10 (or fewer if less than 10 sites)
+        let topTen = times.length > 10 ? 10 : times.length;
+        let dataSet = [];
+        let totalTime = 0;
+        let dataSetLabels = [];
+        
+        for (let i = 0; i < topTen; i++) {
+          dataSet.push(times[i][1]);
+          dataSetLabels.push(times[i][0]);
+          totalTime += times[i][1];
+        }
+        
+        // Generate chart title with date range
+        const startDate = last7Days[6];
+        const endDate = last7Days[0];
+        let chartTitle = `Top Visited Sites (${startDate} to ${endDate})`;
+        
+        // Destroy existing chart if it exists
+        if (dateChart) {
+          dateChart.destroy();
+        }
+        
+        // Create new chart with aggregated data
+        dateChart = new Chart(document.getElementById("differentDayChart"), {
+          type: 'horizontalBar',
+          data: {
+            labels: [''],  // Empty label for the y-axis
+            datasets: dataSetLabels.map((label, index) => {
+              return {
+                label: label,
+                backgroundColor: color[index % color.length],
+                data: [dataSet[index]], // Each dataset has just one value
+                borderWidth: 1,
+                borderColor: '#fff',
+                barThickness: 40,
+                maxBarThickness: 40,
+              }
+            })
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+              display: false // Hide title
+            },
+            legend: {
+              display: true,
+              position: 'top', // Show domains on top
+              labels: {
+                padding: 5, // Reduce padding in legend labels
+                boxWidth: 10, // Smaller color boxes
+                fontSize: 14 // Slightly smaller text
+              },
+              align: 'center'
+            },
+            layout: {
+              padding: {
+                top: 5,
+                bottom: 5,
+                right: 5,
+                left: 5
+              }
+            },
+            plugins: {
+              datalabels: {
+                display: false // Disable datalabels if you have this plugin
+              }
+            },
+            scales: {
+              xAxes: [{
+                stacked: true, // This makes the bars stack
+                ticks: {
+                  display: false, // Hide ticks
+                  beginAtZero: true
+                },
+                gridLines: {
+                  display: false // Hide grid lines
+                }
+              }],
+              yAxes: [{
+                stacked: true, // This makes the bars stack
+                gridLines: {
+                  display: false // Hide grid lines
+                },
+                ticks: {
+                  display: false // Hide ticks
+                }
+              }]
+            },
+            tooltips: {
+              enabled: true,
+              mode: 'nearest',
+              intersect: true,
+              callbacks: {
+                title: function(tooltipItems, data) {
+                  const datasetIndex = tooltipItems[0].datasetIndex;
+                  return data.datasets[datasetIndex].label;
+                },
+                label: function(tooltipItem, data) {
+                  return 'Time spent: ' + secondsToString(tooltipItem.value);
+                }
+              }
+            }
+          }
+        });
+        
+        // Show stats row and update total time
+        document.getElementById("statsRow").classList.remove("d-none");
+        document.getElementById("totalTimeThatDay").innerText = secondsToString(totalTime);
+        
+        // Update table with all the sites data
+        const webList2 = document.getElementById("webList2");
+        while (webList2.firstChild) {
+          webList2.removeChild(webList2.lastChild);
+        }
+        
+        for (let i = 0; i < times.length; i++) {
+          let row = document.createElement('tr');
+          
+          let col1 = document.createElement('td');
+          col1.innerText = i + 1;
+          row.appendChild(col1);
+          
+          let col2 = document.createElement('td');
+          col2.innerText = times[i][0];
+          row.appendChild(col2);
+          
+          let col3 = document.createElement('td');
+          col3.innerText = secondsToString(times[i][1]);
+          row.appendChild(col3);
+          
+          webList2.appendChild(row);
+        }
+      }
+    });
+  });
 });
 
 function getDateTotalTime(storedObject,date){
@@ -384,13 +587,13 @@ document.getElementById('weekTab').addEventListener('click',function(){
     lineTension:0.2,
     borderColor: "rgb(193, 154, 107)",
     pointBackgroundColor:"rgb(243, 217, 178)",
-    data: timeEachDay
+    data: timeEachDay,
   }]
     weeklyChartDetails["data"] = dataObj;
     weeklyChartDetails["options"] = {
       legend:{display:false},
       //title:{display:true,text:"Time Spent Online in the Recent Past"},
-      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time in Seconds", fontSize:10},}]}
+      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time (sec))", fontSize:10},}]}
     };
     new Chart(weeklyChart,weeklyChartDetails);
   });
