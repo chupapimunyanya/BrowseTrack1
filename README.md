@@ -1,4 +1,4 @@
-# <img src="BrowseTrack/icons/icon16.png"> BrowseTrack
+# <img src="BrowseTrack/icons/icon16.png" height="10px"> BrowseTrack
 
 <div align="center">
   
