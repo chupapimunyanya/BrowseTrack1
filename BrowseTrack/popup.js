@@ -593,7 +593,7 @@ document.getElementById('weekTab').addEventListener('click',function(){
     weeklyChartDetails["options"] = {
       legend:{display:false},
       //title:{display:true,text:"Time Spent Online in the Recent Past"},
-      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time (sec))", fontSize:10},}]}
+      scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time (sec)", fontSize:10},}]}
     };
     new Chart(weeklyChart,weeklyChartDetails);
   });
