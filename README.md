@@ -1,8 +1,6 @@
-# 🌐 BrowseTrack
+# <img src="icons/icon50.png"> BrowseTrack
 
 <div align="center">
-  
-  ![BrowseTrack Logo](icons/icon128.png)
   
   **Track and analyze your browsing habits with ease**
   
@@ -15,7 +13,7 @@
 
 BrowseTrack is a lightweight Chrome extension that helps you monitor and visualize your browsing time by tracking time spent on different domains.
 
-## ✨ Features
+## 🎯 Features
 
 - **⏱️ Real-time tracking** - Automatically monitors time spent on every website domain
 - **📊 Detailed statistics** - View your browsing patterns by domain
