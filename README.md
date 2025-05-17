@@ -1,4 +1,4 @@
-# <img src="icons/icon50.png"> BrowseTrack
+# 🌐 BrowseTrack <img src="BrowseTrack/icons/icon50.png">
 
 <div align="center">
   
