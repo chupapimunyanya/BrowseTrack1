@@ -46,16 +46,16 @@ function secondsToString(seconds,compressed=false){
 
 var allKeys, timeSpent, totalTimeSpent, sortedTimeList, topCount, topDataSet, topLabels, dateChart;
 var color = [
-  "rgb(139, 69, 19)",   // Dark Brown
-  "rgb(160, 82, 45)",   // Saddle Brown
-  "rgb(205, 133, 63)",  // Peru
-  "rgb(222, 184, 135)", // Burlywood
-  "rgb(245, 230, 211)", // Light Beige
-  "rgb(230, 184, 156)", // Light Brown
-  "rgb(143, 188, 143)", // Dark Sea Green
-  "rgb(154, 205, 50)",  // Yellow Green
-  "rgb(34, 139, 34)",   // Forest Green
-  "rgb(50, 205, 50)"    // Lime Green
+  "rgb(139, 69, 19)",   //Dark Brown
+  "rgb(160, 82, 45)",   //Saddle Brown
+  "rgb(205, 133, 63)",  //Peru
+  "rgb(222, 184, 135)", //Burlywood
+  "rgb(245, 230, 211)", //Light Beige
+  "rgb(230, 184, 156)", //Light Brown
+  "rgb(143, 188, 143)", //Dark Sea Green
+  "rgb(154, 205, 50)",  //Yellow Green
+  "rgb(34, 139, 34)",   //Forest Green
+  "rgb(50, 205, 50)"    //Lime Green
 ];
 
 totalTimeSpent = 0;
@@ -101,19 +101,19 @@ chrome.storage.local.get(today, function(storedItems){
     console.log(row);
   }
   
-  // Changed to a single stacked horizontal bar chart
+  //Horizontal bar chart
   new Chart(document.getElementById("pie-chart"), {
     type: 'horizontalBar',
     data: {
-      labels: [''],  // Empty label for the y-axis
+      labels: [''],
       datasets: topLabels.map((label, index) => {
         return {
           label: label,
           backgroundColor: color[index % color.length],
-          data: [topDataSet[index]], // Each dataset has just one value
+          data: [topDataSet[index]],
           borderWidth: 1,
           borderColor: '#fff',
-          barThickness: 40, // Setting barThickness at dataset level
+          barThickness: 40,
           maxBarThickness: 40,
           
         }
@@ -123,15 +123,15 @@ chrome.storage.local.get(today, function(storedItems){
       responsive: true,
       maintainAspectRatio: false,
       title: {
-        display: false // Hide title
+        display: false
       },
       legend: {
         display: true,
-        position: 'top', // Show domains on top
+        position: 'top',
         labels: {
-          padding: 5, // Reduce padding in legend labels
-          boxWidth: 10, // Smaller color boxes
-          fontSize: 14 // Slightly smaller text
+          padding: 5,
+          boxWidth: 10,
+          fontSize: 14
         },
         align: 'center'
       },
@@ -145,27 +145,27 @@ chrome.storage.local.get(today, function(storedItems){
       },
       plugins: {
         datalabels: {
-          display: false // Disable datalabels if you have this plugin
+          display: false 
         }
       },
       scales: {
         xAxes: [{
-          stacked: true, // This makes the bars stack
+          stacked: true,
           ticks: {
-            display: false, // Hide ticks
+            display: false,
             beginAtZero: true
           },
           gridLines: {
-            display: false // Hide grid lines
+            display: false 
           }
         }],
         yAxes: [{
-          stacked: true, // This makes the bars stack
+          stacked: true, 
           gridLines: {
-            display: false // Hide grid lines
+            display: false
           },
           ticks: {
-            display: false // Hide ticks
+            display: false 
           }
         }]
       },
@@ -236,16 +236,15 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
           dateChart.destroy()
         }
         
-        // Create new chart using dataSetLabels and dataSet directly
         dateChart = new Chart(document.getElementById("differentDayChart"), {
           type: 'horizontalBar',
           data: {
-            labels: [''],  // Empty label for the y-axis
+            labels: [''], 
             datasets: dataSetLabels.map((label, index) => {
               return {
                 label: label,
                 backgroundColor: color[index % color.length],
-                data: [dataSet[index]], // Each dataset has just one value
+                data: [dataSet[index]], 
                 borderWidth: 1,
                 borderColor: '#fff',
                 barThickness: 40,
@@ -257,15 +256,15 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
             responsive: true,
             maintainAspectRatio: false,
             title: {
-              display: false // Hide title
+              display: false 
             },
             legend: {
               display: true,
-              position: 'top', // Show domains on top
+              position: 'top',
               labels: {
-                padding: 5, // Reduce padding in legend labels
-                boxWidth: 10, // Smaller color boxes
-                fontSize: 14 // Slightly smaller text
+                padding: 5, 
+                boxWidth: 10, 
+                fontSize: 14 
               },
               align: 'center'
             },
@@ -279,27 +278,27 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
             },
             plugins: {
               datalabels: {
-                display: false // Disable datalabels if you have this plugin
+                display: false 
               }
             },
             scales: {
               xAxes: [{
-                stacked: true, // This makes the bars stack
+                stacked: true, 
                 ticks: {
-                  display: false, // Hide ticks
+                  display: false, 
                   beginAtZero: true
                 },
                 gridLines: {
-                  display: false // Hide grid lines
+                  display: false 
                 }
               }],
               yAxes: [{
-                stacked: true, // This makes the bars stack
+                stacked: true, 
                 gridLines: {
-                  display: false // Hide grid lines
+                  display: false 
                 },
                 ticks: {
-                  display: false // Hide ticks
+                  display: false 
                 }
               }]
             },
@@ -344,41 +343,33 @@ document.getElementById("dateSubmit").addEventListener('click',function(){
   }
 });
 
-// Add event listener for Last 7 Days button
+//Last 7 Days
 document.getElementById("last7DaysSubmit").addEventListener('click', function() {
   document.getElementById("tryAgain").classList.add("d-none");
   
-  // Get current date and format it as YYYY-MM-DD
   const today = new Date();
   
-  // Create an array to store the last 7 days dates
   const last7Days = [];
   
-  // Generate the dates for the last 7 days
   for (let i = 0; i < 7; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
     
-    // Format date as YYYY-MM-DD (same format as calendar value)
     const formattedDate = date.toISOString().split('T')[0];
     last7Days.push(formattedDate);
   }
   
-  // Store for accumulated data across all days
   let aggregatedData = {};
   let daysProcessed = 0;
   let missedDays = 0;
   
-  // Process each day and aggregate the results
   last7Days.forEach(day => {
     chrome.storage.local.get(day, function(thatDay) {
       daysProcessed++;
       
       if (thatDay[day] != null) {
-        // Process data for this day
         const sites = Object.keys(thatDay[day]);
         
-        // Add each site's time to the aggregated data
         sites.forEach(site => {
           if (aggregatedData[site]) {
             aggregatedData[site] += thatDay[day][site];
@@ -387,11 +378,9 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
           }
         });
       } else {
-        // No data for this day
         missedDays++;
       }
       
-      // When all days have been processed, display the results
       if (daysProcessed === 7) {
         if (Object.keys(aggregatedData).length === 0) {
           document.getElementById("tryAgain").innerText = "No records exist for the last 7 days!";
@@ -399,13 +388,10 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
           return;
         }
         
-        // Convert aggregated data to array format for sorting
         let times = Object.keys(aggregatedData).map(site => [site, aggregatedData[site]]);
         
-        // Sort by time (descending)
         times.sort(function(a, b) { return b[1] - a[1] });
         
-        // Take top 10 (or fewer if less than 10 sites)
         let topTen = times.length > 10 ? 10 : times.length;
         let dataSet = [];
         let totalTime = 0;
@@ -417,26 +403,23 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
           totalTime += times[i][1];
         }
         
-        // Generate chart title with date range
         const startDate = last7Days[6];
         const endDate = last7Days[0];
         let chartTitle = `Top Visited Sites (${startDate} to ${endDate})`;
         
-        // Destroy existing chart if it exists
         if (dateChart) {
           dateChart.destroy();
         }
         
-        // Create new chart with aggregated data
         dateChart = new Chart(document.getElementById("differentDayChart"), {
           type: 'horizontalBar',
           data: {
-            labels: [''],  // Empty label for the y-axis
+            labels: [''], 
             datasets: dataSetLabels.map((label, index) => {
               return {
                 label: label,
                 backgroundColor: color[index % color.length],
-                data: [dataSet[index]], // Each dataset has just one value
+                data: [dataSet[index]], 
                 borderWidth: 1,
                 borderColor: '#fff',
                 barThickness: 40,
@@ -448,15 +431,15 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
             responsive: true,
             maintainAspectRatio: false,
             title: {
-              display: false // Hide title
+              display: false 
             },
             legend: {
               display: true,
-              position: 'top', // Show domains on top
+              position: 'top',
               labels: {
-                padding: 5, // Reduce padding in legend labels
-                boxWidth: 10, // Smaller color boxes
-                fontSize: 14 // Slightly smaller text
+                padding: 5, 
+                boxWidth: 10, 
+                fontSize: 14 
               },
               align: 'center'
             },
@@ -470,27 +453,27 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
             },
             plugins: {
               datalabels: {
-                display: false // Disable datalabels if you have this plugin
+                display: false 
               }
             },
             scales: {
               xAxes: [{
-                stacked: true, // This makes the bars stack
+                stacked: true, 
                 ticks: {
-                  display: false, // Hide ticks
+                  display: false, 
                   beginAtZero: true
                 },
                 gridLines: {
-                  display: false // Hide grid lines
+                  display: false 
                 }
               }],
               yAxes: [{
-                stacked: true, // This makes the bars stack
+                stacked: true, 
                 gridLines: {
-                  display: false // Hide grid lines
+                  display: false 
                 },
                 ticks: {
-                  display: false // Hide ticks
+                  display: false 
                 }
               }]
             },
@@ -511,11 +494,10 @@ document.getElementById("last7DaysSubmit").addEventListener('click', function() 
           }
         });
         
-        // Show stats row and update total time
+        //Stats row
         document.getElementById("statsRow").classList.remove("d-none");
         document.getElementById("totalTimeThatDay").innerText = secondsToString(totalTime);
         
-        // Update table with all the sites data
         const webList2 = document.getElementById("webList2");
         while (webList2.firstChild) {
           webList2.removeChild(webList2.lastChild);
@@ -592,7 +574,6 @@ document.getElementById('weekTab').addEventListener('click',function(){
     weeklyChartDetails["data"] = dataObj;
     weeklyChartDetails["options"] = {
       legend:{display:false},
-      //title:{display:true,text:"Time Spent Online in the Recent Past"},
       scales:{yAxes:[{scaleLabel:{display:true,labelString:"Time (sec)", fontSize:10},}]}
     };
     new Chart(weeklyChart,weeklyChartDetails);
@@ -600,19 +581,14 @@ document.getElementById('weekTab').addEventListener('click',function(){
 });
 
 
-// Function to export table data to Excel
 function exportTableToExcel(tableId, fileName) {
-  // Get the table element
   const table = document.getElementById(tableId);
   if (!table) return;
   
-  // Create workbook and worksheet
   const wb = XLSX.utils.book_new();
   
-  // Extract data from table
   const data = [];
   
-  // Add header row
   const headerRow = [];
   const headers = table.querySelectorAll('thead th');
   headers.forEach(header => {
@@ -620,7 +596,6 @@ function exportTableToExcel(tableId, fileName) {
   });
   data.push(headerRow);
   
-  // Add data rows
   const rows = table.querySelectorAll('tbody tr');
   rows.forEach(row => {
     const dataRow = [];
@@ -631,28 +606,21 @@ function exportTableToExcel(tableId, fileName) {
     data.push(dataRow);
   });
   
-  // Create worksheet from data
   const ws = XLSX.utils.aoa_to_sheet(data);
   
-  // Add worksheet to workbook
   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
   
-  // Generate filename with current date
   const today = getDateString(new Date());
   const fullFileName = `${fileName}_${today}.xlsx`;
   
-  // Write workbook and download
   XLSX.writeFile(wb, fullFileName);
 }
 
-// Event listeners for export buttons
 document.addEventListener('DOMContentLoaded', function() {
-  // Export button for today's data
   document.getElementById('exportBtn1').addEventListener('click', function() {
     exportTableToExcel('webList', 'BrowseTrack_Today');
   });
   
-  // Export button for specific date data
   document.getElementById('exportBtn2').addEventListener('click', function() {
     const selectedDate = document.getElementById('dateValue').value;
     const fileName = selectedDate ? 
@@ -663,20 +631,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Функция для создания кастомного календаря в BrowseTrack
 function initBrowseTrackCalendar() {
-  // Находим элементы DOM
   const dateInput = document.getElementById('dateValue');
   const dateSubmitBtn = document.getElementById('dateSubmit');
   
-  if (!dateInput) return; // Выходим, если элемент не найден
-  
-  // Создаем HTML-структуру для кастомного календаря
+  if (!dateInput) return; 
   const calendarEl = document.createElement('div');
   calendarEl.className = 'bt-calendar';
   calendarEl.id = 'btCalendar';
   
-  // Добавляем HTML для календаря
   calendarEl.innerHTML = `
     <div class="bt-calendar-header">
       <div class="bt-month-nav">
@@ -700,10 +663,8 @@ function initBrowseTrackCalendar() {
     </div>
   `;
   
-  // Вставляем календарь после input
   dateInput.parentNode.insertBefore(calendarEl, dateInput.nextSibling);
   
-  // Находим элементы управления календарем
   const calendarContainer = document.getElementById('btCalendar');
   const monthYearEl = document.getElementById('btCurrentMonthYear');
   const prevMonthBtn = document.getElementById('btPrevMonth');
@@ -712,45 +673,34 @@ function initBrowseTrackCalendar() {
   const todayDateBtn = document.getElementById('btTodayDate');
   const calendarDaysContainer = document.getElementById('btCalendarDays');
   
-  // Состояние календаря
   let currentDate = new Date();
   let selectedDate = null;
   
-// Array of months
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
   
-  // Функция обновления календаря
   function renderCalendar() {
-    // Обновляем заголовок с месяцем и годом
     monthYearEl.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
     
-    // Очищаем дни календаря (кроме дней недели)
     const dayElements = calendarDaysContainer.querySelectorAll('.bt-calendar-day');
     dayElements.forEach(day => day.remove());
     
-    // Получаем первый день месяца
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     
-    // Получаем последний день месяца
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     
-    // Определяем день недели для первого дня месяца (0 - воскресенье, 1 - понедельник)
     let firstDayOfWeek = firstDayOfMonth.getDay();
-    // Преобразуем для календаря, начинающегося с понедельника
     firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
     
-    // Добавляем пустые ячейки для выравнивания первого дня
     for (let i = 0; i < firstDayOfWeek; i++) {
       const emptyDay = document.createElement('div');
       emptyDay.className = 'bt-calendar-day';
       calendarDaysContainer.appendChild(emptyDay);
     }
     
-    // Заполняем календарь днями текущего месяца
     const today = new Date();
     
     for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
@@ -760,7 +710,6 @@ const months = [
       
       const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       
-      // Отмечаем сегодняшний день
       if (
         today.getDate() === day && 
         today.getMonth() === currentDate.getMonth() && 
@@ -769,7 +718,6 @@ const months = [
         dayElement.classList.add('today');
       }
       
-      // Отмечаем выбранный день
       if (
         selectedDate && 
         selectedDate.getDate() === day && 
@@ -779,7 +727,6 @@ const months = [
         dayElement.classList.add('selected');
       }
       
-      // Добавляем обработчик клика для выбора даты
       dayElement.addEventListener('click', () => {
         selectDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
       });
@@ -788,22 +735,14 @@ const months = [
     }
   }
   
-  // Функция для выбора даты
   function selectDate(date) {
-    selectedDate = date;
-    
-    // Форматируем дату для input в формате YYYY-MM-DD
+    selectedDate = date;    
     const formattedDate = formatDate(date);
     dateInput.value = formattedDate;
-    
-    // Обновляем отображение календаря
     renderCalendar();
-    
-    // Скрываем календарь
     calendarContainer.classList.remove('show');
   }
   
-  // Функция форматирования даты в формат YYYY-MM-DD
   function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -811,26 +750,22 @@ const months = [
     return `${year}-${month}-${day}`;
   }
   
-  // Функция для перехода к предыдущему месяцу
   function gotoPrevMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
   }
   
-  // Функция для перехода к следующему месяцу
   function gotoNextMonth() {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
   }
   
-  // Функция для выбора текущей даты
   function selectToday() {
     const today = new Date();
     currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
     selectDate(today);
   }
   
-  // Функция для очистки выбранной даты
   function clearDate() {
     selectedDate = null;
     dateInput.value = '';
@@ -838,35 +773,28 @@ const months = [
     calendarContainer.classList.remove('show');
   }
   
-  // Обработчики событий для управления календарем
   prevMonthBtn.addEventListener('click', gotoPrevMonth);
   nextMonthBtn.addEventListener('click', gotoNextMonth);
   clearDateBtn.addEventListener('click', clearDate);
   todayDateBtn.addEventListener('click', selectToday);
   
-  // Показываем календарь при клике на input
   dateInput.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
     calendarContainer.classList.toggle('show');
   });
   
-  // Скрываем календарь при клике вне его области
   document.addEventListener('click', function(e) {
     if (!calendarContainer.contains(e.target) && e.target !== dateInput) {
       calendarContainer.classList.remove('show');
     }
   });
   
-  // Предотвращаем открытие нативного календаря
   dateInput.addEventListener('focus', function(e) {
     this.blur();
-  });
-  
-  // Инициализируем календарь
+  });  
   renderCalendar();
   
-  // Если в input уже есть дата, устанавливаем её в календаре
   if (dateInput.value) {
     const parts = dateInput.value.split('-');
     if (parts.length === 3) {
@@ -884,7 +812,6 @@ const months = [
   }
 }
 
-// Запускаем инициализацию календаря после загрузки DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initBrowseTrackCalendar);
 } else {
